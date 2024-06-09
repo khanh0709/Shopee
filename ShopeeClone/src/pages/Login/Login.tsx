@@ -1,41 +1,51 @@
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import { getRules } from '../../utils/rule'
+import Input from '../../components/Input'
 
+interface FormData {
+  email: string
+  password: string
+  confirm_password: string
+}
+//dinh nghia cac field trong form de goi y
 export default function Login() {
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm()
+  } = useForm<FormData>()
+  const rules = getRules()
+  //run if form is validated
   const onSubmit = handleSubmit((data) => {
     console.log(data)
   })
   return (
     <div className='bg-orange'>
-      <div className='max-w-7xl mx-auto px-4'>
+      <div className='container'>
         <div className='grid grid-cols-1 lg:grid-cols-5 py-20 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
-            <form onSubmit={onSubmit} action='' className='p-10 rounded bg-white shadow-sm'>
+            <form onSubmit={onSubmit} action='' noValidate className='p-10 rounded bg-white shadow-sm'>
               <div className='text-2xl'>Đăng nhập</div>
-              <div className='mt-8'>
-                <input
-                  type='email'
-                  className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                  placeholder='Email'
-                  {...register('email')}
-                />
-                <div className='mt-1 text-red-600 min-h-[1rem] text-sm text-left'>Email không hợp lệ</div>
-              </div>
-              <div className='mt-3'>
-                <input
-                  type='password'
-                  className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                  placeholder='password'
-                  name='password'
-                />
-                <div className='mt-1 text-red-600 min-h-[1rem] text-sm text-left'>Mật khẩu không hợp lệ</div>
-              </div>
-              <div className='mt-3'>
+              <Input
+                className='mt-8'
+                name='email'
+                placeholder='email'
+                register={register}
+                type='email'
+                errorMessage={errors.email?.message}
+                rules={rules.email}
+              />
+              <Input
+                className='mt-2'
+                name='password'
+                placeholder='password'
+                register={register}
+                type='password'
+                errorMessage={errors.password?.message}
+                rules={rules.password}
+              />
+              <div className='mt-2'>
                 <button
                   type='submit'
                   className='w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'
