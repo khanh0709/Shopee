@@ -1,23 +1,37 @@
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { getRules } from '../../utils/rule'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation } from '@tanstack/react-query'
+import { omit } from 'lodash'
+import { Schema, schema } from '../../utils/rule'
+import Input from '../../components/Input'
+import { registerAccount } from '../../apis/auth.apis'
+import { isAxios422Error } from '../../utils/utils'
 
-interface FormData {
-  email: string
-  password: string
-  confirm_password: string
-}
 export default function Register() {
   const {
     register,
     handleSubmit,
-    getValues,
     formState: { errors }
-  } = useForm<FormData>()
-  const rules = getRules(getValues)
+  } = useForm<Schema>({
+    resolver: yupResolver(schema)
+  })
+  const registerAccountMutation = useMutation({
+    mutationFn: (body: Omit<Schema, 'confirm_password'>) => registerAccount(body)
+  })
   const onSubmit = handleSubmit(
     (data) => {
-      console.log(data)
+      const body = omit(data, ['confirm_password'])
+      registerAccountMutation.mutate(body, {
+        onSuccess: (data) => {
+          console.log(data)
+        },
+        onError: (error) => {
+          if (isAxios422Error(error)) {
+            console.log(error)
+          }
+        }
+      })
     },
     () => {
       // const password = getValues('password')
@@ -31,7 +45,31 @@ export default function Register() {
           <div className='lg:col-span-2 lg:col-start-4'>
             <form noValidate onSubmit={onSubmit} action='' className='p-10 rounded bg-white shadow-sm'>
               <div className='text-2xl'>Đăng ký</div>
-              <div className='mt-8'>
+              <Input
+                className='mt-8'
+                name='email'
+                placeholder='email'
+                register={register}
+                type='email'
+                errorMessage={errors.email?.message}
+              />
+              <Input
+                className='mt-3'
+                name='password'
+                placeholder='Password'
+                register={register}
+                type='password'
+                errorMessage={errors.password?.message}
+              />
+              <Input
+                className='mt-3'
+                name='confirm_password'
+                placeholder='Confirm Password'
+                register={register}
+                type='password'
+                errorMessage={errors.confirm_password?.message}
+              />
+              {/* <div className='mt-8'>
                 <input
                   type='email'
                   className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
@@ -61,7 +99,7 @@ export default function Register() {
                 <div className='mt-1 text-red-600 min-h-[1rem] text-sm text-left'>
                   {errors.confirm_password?.message}
                 </div>
-              </div>
+              </div> */}
               <div className='mt-3'>
                 <button className='w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'>
                   Đăng ký

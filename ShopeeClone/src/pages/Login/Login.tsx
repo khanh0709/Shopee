@@ -1,20 +1,18 @@
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
-import { getRules } from '../../utils/rule'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { LoginSchema, getRules, loginSchema } from '../../utils/rule'
 import Input from '../../components/Input'
 
-interface FormData {
-  email: string
-  password: string
-  confirm_password: string
-}
 //dinh nghia cac field trong form de goi y
 export default function Login() {
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<FormData>()
+  } = useForm<LoginSchema>({
+    resolver: yupResolver(loginSchema)
+  })
   const rules = getRules()
   //run if form is validated
   const onSubmit = handleSubmit((data) => {

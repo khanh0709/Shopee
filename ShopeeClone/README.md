@@ -34,3 +34,12 @@ neu vscode bao loi linh tinh -> restart eslint
 ctr shift p -> restart eslint
 
 yarn add react-router-dom
+yarn add @hookform/resolvers/yup
+yarn add yup
+yarn add axios
+yarn add @tanstack/react-query
+yarn add @tanstack/react-query-devtools
+
+lodash: dung de su dung omit ngon hon
+yarn add lodash
+yarn add -D @types/lodash
