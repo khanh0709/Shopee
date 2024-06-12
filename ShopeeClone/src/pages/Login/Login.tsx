@@ -1,23 +1,51 @@
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { LoginSchema, getRules, loginSchema } from '../../utils/rule'
+import { useMutation } from '@tanstack/react-query'
+
+import { LoginSchema, loginSchema } from '../../utils/rule'
 import Input from '../../components/Input'
+import { login } from '../../apis/auth.apis'
+import { isAxios422Error } from '../../utils/utils'
+import { ResponseApi } from '../../types/utils.type'
 
 //dinh nghia cac field trong form de goi y
 export default function Login() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors }
   } = useForm<LoginSchema>({
     resolver: yupResolver(loginSchema)
   })
-  const rules = getRules()
-  //run if form is validated
-  const onSubmit = handleSubmit((data) => {
-    console.log(data)
+  const loginMutation = useMutation({
+    mutationFn: (body: LoginSchema) => login(body)
   })
+  const onSubmit = handleSubmit(
+    (data) => {
+      const body = data
+      loginMutation.mutate(body, {
+        onSuccess: (data) => {
+          console.log(data)
+        },
+        onError: (error) => {
+          if (isAxios422Error<ResponseApi<LoginSchema>>(error)) {
+            const formError = error.response?.data.data
+            if (formError) {
+              Object.keys(formError).forEach((key) => {
+                setError(key as keyof LoginSchema, {
+                  message: formError[key as keyof LoginSchema],
+                  type: 'Server'
+                })
+              })
+            }
+          }
+        }
+      })
+    },
+    () => {}
+  )
   return (
     <div className='bg-orange'>
       <div className='container'>
@@ -32,7 +60,6 @@ export default function Login() {
                 register={register}
                 type='email'
                 errorMessage={errors.email?.message}
-                rules={rules.email}
               />
               <Input
                 className='mt-2'
@@ -41,7 +68,6 @@ export default function Login() {
                 register={register}
                 type='password'
                 errorMessage={errors.password?.message}
-                rules={rules.password}
               />
               <div className='mt-2'>
                 <button

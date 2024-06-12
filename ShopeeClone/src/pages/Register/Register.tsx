@@ -7,11 +7,13 @@ import { Schema, schema } from '../../utils/rule'
 import Input from '../../components/Input'
 import { registerAccount } from '../../apis/auth.apis'
 import { isAxios422Error } from '../../utils/utils'
+import { ResponseApi } from '../../types/utils.type'
 
 export default function Register() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors }
   } = useForm<Schema>({
     resolver: yupResolver(schema)
@@ -27,13 +29,37 @@ export default function Register() {
           console.log(data)
         },
         onError: (error) => {
-          if (isAxios422Error(error)) {
-            console.log(error)
+          console.log('error')
+          if (isAxios422Error<ResponseApi<Omit<Schema, 'confirm_password'>>>(error)) {
+            //config generic type cho data cua error
+            console.log('axios422error')
+            const formError = error.response?.data.data
+            if (formError) {
+              Object.keys(formError).forEach((key) => {
+                setError(key as keyof Omit<Schema, 'confirm_password'>, {
+                  message: formError[key as keyof Omit<Schema, 'confirm_password'>],
+                  type: 'Server'
+                })
+              })
+            }
+            // if (formError?.email) {
+            //   setError('email', {
+            //     message: formError.email,
+            //     type: 'Server'
+            //   })
+            // }
+            // if (formError?.password) {
+            //   setError('password', {
+            //     message: formError.password,
+            //     type: 'Server'
+            //   })
+            // }
           }
         }
       })
     },
     () => {
+      //nếu vi phạm rules, schema của useForm thì sẽ ko submit mà vào đây
       // const password = getValues('password')
       // console.log(password)
     }

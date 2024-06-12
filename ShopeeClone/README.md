@@ -43,3 +43,17 @@ yarn add @tanstack/react-query-devtools
 lodash: dung de su dung omit ngon hon
 yarn add lodash
 yarn add -D @types/lodash
+
+yarn add react-toastify
+
+Acc:
+khanh0709@gmail.com
+123456
+
+framer motion: animation
+framer-motion
+
+floating ui: popup, modal
+@floating-ui/react
+
+web heroicon: svg icon of tailwind css
