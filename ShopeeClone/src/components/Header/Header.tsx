@@ -1,20 +1,65 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
-import { useFloating } from '@floating-ui/react'
+import Popover from '../Popover'
+function PopoverLanguage() {
+  return (
+    <div className='bg-white relative shadow-md rounded-sm border border-gray-200'>
+      <div className='flex flex-col py-2 pl-3 pr-32'>
+        <button className='py-2 px-3 hover:text-orange'>Tiếng Việt</button>
+        <button className='py-2 px-3 hover:text-orange mt-2'>English</button>
+      </div>
+    </div>
+  )
+}
+function PopoverProfile() {
+  return (
+    <div className='bg-white relative shadow-md rounded-sm border border-gray-200'>
+      <div className='flex flex-col py-2 px-8'>
+        <Link to='/' className='py-2 px-4 bg-white  hover:text-cyan-500'>
+          Tài khoản của tôi
+        </Link>
+        <Link to='/' className='py-2 px-4 bg-white  hover:text-cyan-500'>
+          Đơn mua
+        </Link>
+        <button className='py-2 px-4 bg-white  hover:text-cyan-500 text-left'>Đăng xuất</button>
+      </div>
+    </div>
+  )
+}
+function PopoverCard() {
+  return (
+    <div className='bg-white relative shadow-md rounded-sm border border-gray-200 max-w-[400px] text-sm p-3'>
+      <div className='text-gray-400 capitalize'>Sản phẩm mới thêm</div>
+      <div className='mt-5'>
+        <div className='mt-4 flex'>
+          <div className='flex-shrink-0'>
+            <img
+              className='w-11 h-11'
+              src='https://product.hstatic.net/200000738853/product/3_ac31fd87c0ee434a903c80f0393e6fae_master.jpg'
+              alt='product'
+            />
+          </div>
+          <div className='flex-grow ml-2 overflow-hidden truncate'>Bộ nồi inox 3 đáy Sunhouse SHG361</div>
+          <div className='ml-2 flex-shrink-0'>
+            <span className='text-orange'>đ490.000</span>
+          </div>
+        </div>
+        {/* footer */}
+        <div className='flex mt-6 items-center justify-between'>
+          <div className='capitalize text-xs'>Thêm hàng vào giỏ</div>
+          <button className='capitallize bg-orange hover:bg-opacity-80 px-4 py-2 rounded-sm text-white'>
+            Xem giỏ hàng
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
 export default function Header() {
-  const [open, setOpen] = useState(false)
-  const { x, y, refs, strategy } = useFloating()
-  const showPopover = () => {
-    setOpen(true)
-  }
-  const hidePopover = () => {
-    setOpen(false)
-  }
   return (
     <div className='pb-5 pt-2 bg-gradient-to-r from-[#f53d2d] to-[#f63] text-white'>
       <div className='container'>
         <div className='flex justify-end'>
-          <div className='flex items-center py-1 hover:text-gray-300' ref={refs.setReference}>
+          <Popover className='flex items-center py-1 hover:text-gray-300' renderPopover={<PopoverLanguage />}>
             {/* //global */}
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -38,26 +83,11 @@ export default function Header() {
               strokeWidth={1.5}
               stroke='currentColor'
               className='w-5 h-5'
-              onMouseEnter={showPopover}
-              onMouseLeave={hidePopover}
             >
               <path strokeLinecap='round' strokeLinejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5' />
             </svg>
-          </div>
-          {open && (
-            <div
-              ref={refs.setFloating}
-              style={{
-                position: strategy,
-                top: y ?? 0,
-                left: x ?? 0,
-                width: 'max-content'
-              }}
-            >
-              Tool
-            </div>
-          )}
-          <div className='flex items-center py-1 hover:text-gray-300 ml-6'>
+          </Popover>
+          <Popover className='flex items-center py-1 hover:text-gray-300 ml-6' renderPopover={<PopoverProfile />}>
             <div className='w-6 h-6 mr-2 flex-shrink-0'>
               <img
                 className='w-full h-full object-cover rounded-full'
@@ -66,9 +96,9 @@ export default function Header() {
               />
             </div>
             <div>Phạm Duy Khánh</div>
-          </div>
+          </Popover>
         </div>
-        <div className='grid grid-cols-12 gap-4 mt-4 items-center'>
+        <div className='grid grid-cols-12 gap-4 mt-8 items-center'>
           <Link to='/' className='col-span-2'>
             <svg viewBox='0 0 192 65' className='h-11 fill-white'>
               <g fillRule='evenodd'>
@@ -102,22 +132,24 @@ export default function Header() {
               </button>
             </div>
           </form>
-          <Link to='/'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='w-6 h-6'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z'
-              />
-            </svg>
-          </Link>
+          <Popover initOpen={true} className='col-span-1' renderPopover={<PopoverCard />}>
+            <Link to='/' className='flex justify-center'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='w-11 h-11'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z'
+                />
+              </svg>
+            </Link>
+          </Popover>
         </div>
       </div>
     </div>
