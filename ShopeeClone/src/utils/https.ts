@@ -1,9 +1,11 @@
 import axios, { AxiosError, AxiosInstance, HttpStatusCode } from 'axios'
 import { toast } from 'react-toastify'
+import { AuthResponse } from '../types/auth.type'
 
 //https://axios-http.com/docs/interceptors
 class Http {
   instance: AxiosInstance
+  private accessToken: string
   constructor() {
     this.instance = axios.create({
       baseURL: 'https://api-ecom.duthanhduoc.com/',
@@ -14,7 +16,12 @@ class Http {
     })
 
     this.instance.interceptors.response.use(
-      function (response) {
+      (response) => {
+        // console.log(response)
+        const { url } = response.config
+        if (url === '/login' || url === '/register') {
+          this.accessToken = (response.data as AuthResponse).data?.access_token || undefined
+        }
         return response
       },
       function (error: AxiosError) {

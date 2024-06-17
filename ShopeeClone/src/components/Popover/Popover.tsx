@@ -12,7 +12,8 @@ export default function Popover({ children, renderPopover, className, as: Elemen
   const [open, setOpen] = useState(initOpen)
   const arrowRef = useRef<HTMLElement>(null)
   const { x, y, refs, strategy, middlewareData, floatingStyles } = useFloating({
-    middleware: [offset(6), shift(), arrow({ element: arrowRef })]
+    middleware: [offset(6), shift(), arrow({ element: arrowRef })],
+    placement: 'bottom'
   })
   /*
   middlewareData là tọa độ của arrow so với floating
@@ -23,6 +24,7 @@ export default function Popover({ children, renderPopover, className, as: Elemen
   const hidePopover = () => {
     setOpen(false)
   }
+  // console.log(middlewareData.arrow?.x ?? 0, middlewareData.arrow?.y)
   return (
     <Element className={className} ref={refs.setReference} onMouseEnter={showPopover} onMouseLeave={hidePopover}>
       {children}
@@ -49,7 +51,7 @@ export default function Popover({ children, renderPopover, className, as: Elemen
                 className='border-x-transparent border-t-transparent border-b-white border-[11px] absolute z-10'
                 style={{
                   left: middlewareData.arrow?.x,
-                  // top: middlewareData.arrow?.y,
+                  // top: middlewareData.arrow?.y
                   top: '-18px'
                 }}
               />

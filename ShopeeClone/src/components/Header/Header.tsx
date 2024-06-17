@@ -14,7 +14,7 @@ function PopoverProfile() {
   return (
     <div className='bg-white relative shadow-md rounded-sm border border-gray-200'>
       <div className='flex flex-col py-2 px-8'>
-        <Link to='/' className='py-2 px-4 bg-white  hover:text-cyan-500'>
+        <Link to='/profile' className='py-2 px-4 bg-white  hover:text-cyan-500'>
           Tài khoản của tôi
         </Link>
         <Link to='/' className='py-2 px-4 bg-white  hover:text-cyan-500'>
@@ -132,8 +132,8 @@ export default function Header() {
               </button>
             </div>
           </form>
-          <Popover initOpen={true} className='col-span-1' renderPopover={<PopoverCard />}>
-            <Link to='/' className='flex justify-center'>
+          <Popover className='col-span-1 justify-self-start' renderPopover={<PopoverCard />}>
+            <Link to='/' className=''>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
