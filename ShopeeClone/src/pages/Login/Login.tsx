@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 
@@ -8,9 +8,15 @@ import Input from '../../components/Input'
 import { login } from '../../apis/auth.apis'
 import { isAxios422Error } from '../../utils/utils'
 import { ResponseApi } from '../../types/utils.type'
+import { useContext } from 'react'
+import { AppContext } from '../../contexts/app.context'
+import Button from '../../components/Button/Button'
+import path from '../../constants/path'
 
 //dinh nghia cac field trong form de goi y
 export default function Login() {
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -26,8 +32,10 @@ export default function Login() {
     (data) => {
       const body = data
       loginMutation.mutate(body, {
-        onSuccess: (data) => {
-          console.log(data)
+        onSuccess: (response) => {
+          setIsAuthenticated(true)
+          setProfile(response.data.data?.user ?? null)
+          navigate('/')
         },
         onError: (error) => {
           if (isAxios422Error<ResponseApi<LoginSchema>>(error)) {
@@ -70,16 +78,18 @@ export default function Login() {
                 errorMessage={errors.password?.message}
               />
               <div className='mt-2'>
-                <button
+                <Button
                   type='submit'
-                  className='w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'
+                  className='w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600 flex justify-center items-center'
+                  isLoading={loginMutation.isPending}
+                  disabled={loginMutation.isPending}
                 >
                   Đăng nhập
-                </button>
+                </Button>
               </div>
               <div className='flex items-center mt-8 justify-center'>
                 <div className='text-slate-400'>Bạn chưa có tài khoản?</div>
-                <Link className='text-red-400 ml-1' to='/login'>
+                <Link className='text-red-400 ml-1' to={path.register}>
                   Đăng ký
                 </Link>
               </div>

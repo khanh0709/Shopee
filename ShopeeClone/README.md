@@ -1,5 +1,7 @@
 # React + TypeScript + Vite
 
+tailwind document: flowbite
+
 setup eslint, prettier
 yarn add eslint prettier @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react eslint-plugin-prettier -D
 
@@ -49,6 +51,10 @@ yarn add react-toastify
 Acc:
 khanh0709@gmail.com
 123456
+
+khanh0709x@gmail.com
+123456
+x=[1,...]
 
 framer motion: animation
 framer-motion

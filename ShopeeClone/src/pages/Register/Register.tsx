@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
@@ -8,8 +8,14 @@ import Input from '../../components/Input'
 import { registerAccount } from '../../apis/auth.apis'
 import { isAxios422Error } from '../../utils/utils'
 import { ResponseApi } from '../../types/utils.type'
+import { useContext } from 'react'
+import { AppContext } from '../../contexts/app.context'
+import Button from '../../components/Button/Button'
+import path from '../../constants/path'
 
 export default function Register() {
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -25,8 +31,10 @@ export default function Register() {
     (data) => {
       const body = omit(data, ['confirm_password'])
       registerAccountMutation.mutate(body, {
-        onSuccess: (data) => {
-          console.log(data)
+        onSuccess: (response) => {
+          setIsAuthenticated(true)
+          setProfile(response.data.data?.user ?? null)
+          navigate('/')
         },
         onError: (error) => {
           console.log('error')
@@ -127,13 +135,21 @@ export default function Register() {
                 </div>
               </div> */}
               <div className='mt-3'>
-                <button className='w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'>
+                <Button
+                  type='submit'
+                  className='w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600 flex justify-center items-center'
+                  isLoading={registerAccountMutation.isPending}
+                  disabled={registerAccountMutation.isPending}
+                >
                   Đăng ký
-                </button>
+                </Button>
+                {/* <button className='w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'>
+                  Đăng ký
+                </button> */}
               </div>
               <div className='flex items-center mt-8 justify-center'>
                 <div className='text-slate-400'>Bạn đã có tài khoản?</div>
-                <Link className='text-red-400 ml-1' to='/login'>
+                <Link className='text-red-400 ml-1' to={path.login}>
                   Đăng nhập
                 </Link>
               </div>
