@@ -63,3 +63,5 @@ floating ui: popup, modal
 @floating-ui/react
 
 web heroicon: svg icon of tailwind css
+
+@tailwindcss/line-clamp: tailwind chỉ hỗ trợ truncate 1 line, muốn truncate có nhiều line phải dùng thư viện này

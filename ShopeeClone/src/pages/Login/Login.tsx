@@ -5,13 +5,13 @@ import { useMutation } from '@tanstack/react-query'
 
 import { LoginSchema, loginSchema } from '../../utils/rule'
 import Input from '../../components/Input'
-import { login } from '../../apis/auth.apis'
 import { isAxios422Error } from '../../utils/utils'
 import { ResponseApi } from '../../types/utils.type'
 import { useContext } from 'react'
 import { AppContext } from '../../contexts/app.context'
 import Button from '../../components/Button/Button'
 import path from '../../constants/path'
+import authApi from '../../apis/auth.apis'
 
 //dinh nghia cac field trong form de goi y
 export default function Login() {
@@ -26,7 +26,7 @@ export default function Login() {
     resolver: yupResolver(loginSchema)
   })
   const loginMutation = useMutation({
-    mutationFn: (body: LoginSchema) => login(body)
+    mutationFn: (body: LoginSchema) => authApi.login(body)
   })
   const onSubmit = handleSubmit(
     (data) => {

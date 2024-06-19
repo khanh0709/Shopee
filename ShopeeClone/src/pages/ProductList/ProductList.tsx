@@ -3,6 +3,10 @@ import Product from './Product'
 import SortProductList from './SortProductList'
 
 export default function ProductList() {
+  // const { data } = useQuery({
+  //   queryKey: ['products', queryParams],
+  //   queryFn: () => {}
+  // })
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
@@ -12,7 +16,7 @@ export default function ProductList() {
           </div>
           <div className='col-span-9'>
             <SortProductList />
-            <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+            <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2'>
               {Array(30)
                 .fill(0)
                 .map((_, index) => (

@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import Popover from '../Popover'
-import { logout } from '../../apis/auth.apis'
 import { useContext } from 'react'
 import { AppContext } from '../../contexts/app.context'
 import path from '../../constants/path'
+import authApi from '../../apis/auth.apis'
 export default function Header() {
   const { isAuthenticated, setIsAuthenticated, profile, setProfile } = useContext(AppContext)
   const logoutMutation = useMutation({
-    mutationFn: () => logout(),
+    mutationFn: () => authApi.logout(),
     onSuccess: () => {
       setIsAuthenticated(false) //chỉ càn set authen, nếu link ko hợp lệ, là link protected thì hàm trong useRouteElement sẽ tự xử lý
       setProfile(null)
