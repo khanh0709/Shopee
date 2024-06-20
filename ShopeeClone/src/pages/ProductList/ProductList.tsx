@@ -1,12 +1,36 @@
+import { omitBy, isUndefined } from 'lodash'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import useQueryParams from '../../hooks/useQueryParams'
 import AsideFilter from './AsideFilter'
 import Product from './Product'
 import SortProductList from './SortProductList'
-
+import productApi from '../../apis/product.apis'
+import Pagination from '../../components/Pagination'
+import { ProductListConfig, QueryConfig } from '../../types/product.type'
 export default function ProductList() {
-  // const { data } = useQuery({
-  //   queryKey: ['products', queryParams],
-  //   queryFn: () => {}
-  // })
+  const queryParams = useQueryParams()
+  const queryConfig: QueryConfig = omitBy(
+    {
+      page: queryParams.page || '1',
+      limit: queryParams.limit,
+      sort_by: queryParams.sort_by,
+      exclude: queryParams.exclude,
+      name: queryParams.name,
+      order: queryParams.order,
+      price_max: queryParams.price_max,
+      price_min: queryParams.price_min,
+      rating_filter: queryParams.rating_filter
+    },
+    isUndefined //loc underfined
+  )
+  const { data } = useQuery({
+    queryKey: ['products', queryParams],
+    queryFn: () => productApi.getProducts(queryConfig as ProductListConfig),
+    placeholderData: keepPreviousData //giúp web ko bi giật, web giật vì khi chuyển trang component bị re-render, data bị underfined đến khi query gọi xong.
+    //nếu them thuộc tính này thì sẽ giữ data cũ đến khi gọi xong query
+  })
+  // console.log(queryParams)
+  // console.log(data)
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
@@ -15,16 +39,16 @@ export default function ProductList() {
             <AsideFilter />
           </div>
           <div className='col-span-9'>
-            <SortProductList />
+            <SortProductList queryConfig={queryConfig} pageSize={data?.data.data?.pagination.page_size} />
             <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2'>
-              {Array(30)
-                .fill(0)
-                .map((_, index) => (
-                  <div className='col-span-1' key={index}>
-                    <Product />
+              {data &&
+                data.data.data?.products.map((product) => (
+                  <div className='col-span-1' key={product._id}>
+                    <Product product={product} />
                   </div>
                 ))}
             </div>
+            {data && <Pagination queryConfig={queryConfig} pageSize={data.data.data?.pagination.page_size} />}
           </div>
         </div>
       </div>
