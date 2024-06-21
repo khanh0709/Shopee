@@ -1,12 +1,26 @@
-import { Link } from 'react-router-dom'
+import { Link, createSearchParams } from 'react-router-dom'
 import path from '../../../constants/path'
 import Input from '../../../components/Input'
 import Button from '../../../components/Button/Button'
 import StartLine from '../../../components/StarLine'
-export default function AsideFilter() {
+import { QueryConfig } from '../../../types/product.type'
+import { Category } from '../../../types/category.type'
+import { omit } from 'lodash'
+interface Props {
+  queryConfig: QueryConfig
+  categories: Category[]
+}
+export default function AsideFilter({ queryConfig, categories }: Props) {
+  const { category } = queryConfig
   return (
     <div className='py-4'>
-      <Link to={path.home} className='flex items-center justify-start font-bold'>
+      <Link
+        to={{
+          pathname: path.home,
+          search: createSearchParams(omit(queryConfig, ['category'])).toString()
+        }}
+        className={`flex items-center justify-start font-bold ${!category ? 'text-orange font-semibold' : ''}`}
+      >
         <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='size-3 mr-3'>
           <path
             fillRule='evenodd'
@@ -18,24 +32,50 @@ export default function AsideFilter() {
       </Link>
       <div className='bg-gray-300 h-[1px] my-4'></div>
       <ul>
-        <li className='py-2 flex justify-start relative'>
-          <Link to={path.home} className='text-orange font-semibold w-full flex items-center'>
-            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' className='size-2 fill-orange basis-2'>
-              <path
-                fillRule='evenodd'
-                d='M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z'
-                clipRule='evenodd'
-              />
-            </svg>
-            <div className=''>Thời trang nam</div>
-          </Link>
-        </li>
-        <li className='py-2 flex justify-start relative'>
-          <Link to={path.home} className=' w-full flex items-center'>
-            <div className='fill-orange basis-2'></div>
-            <div className=''>Thời trang nam</div>
-          </Link>
-        </li>
+        {categories.map((categoryItem, index) => {
+          if (categoryItem._id === category) {
+            return (
+              <li className='py-2 flex justify-start relative' key={categoryItem._id}>
+                <Link
+                  to={{
+                    pathname: path.home,
+                    search: createSearchParams({
+                      ...queryConfig,
+                      category: categoryItem._id
+                    }).toString()
+                  }}
+                  className='text-orange font-semibold w-full flex items-center'
+                >
+                  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' className='size-2 fill-orange basis-2'>
+                    <path
+                      fillRule='evenodd'
+                      d='M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                  <div className=''>{categoryItem.name}</div>
+                </Link>
+              </li>
+            )
+          }
+          return (
+            <li className='py-2 flex justify-start relative' key={categoryItem._id}>
+              <Link
+                to={{
+                  pathname: path.home,
+                  search: createSearchParams({
+                    ...queryConfig,
+                    category: categoryItem._id
+                  }).toString()
+                }}
+                className='w-full flex items-center'
+              >
+                <span className='basis-2'></span>
+                <div className=''>{categoryItem.name}</div>
+              </Link>
+            </li>
+          )
+        })}
       </ul>
       <Link to={path.home} className='flex items-center justify-start font-bold mt-4'>
         <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='size-3 mr-3'>

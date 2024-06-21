@@ -7,6 +7,7 @@ import SortProductList from './SortProductList'
 import productApi from '../../apis/product.apis'
 import Pagination from '../../components/Pagination'
 import { ProductListConfig, QueryConfig } from '../../types/product.type'
+import categoryApi from '../../apis/category.apis'
 export default function ProductList() {
   const queryParams = useQueryParams()
   const queryConfig: QueryConfig = omitBy(
@@ -19,36 +20,45 @@ export default function ProductList() {
       order: queryParams.order,
       price_max: queryParams.price_max,
       price_min: queryParams.price_min,
-      rating_filter: queryParams.rating_filter
+      rating_filter: queryParams.rating_filter,
+      category: queryParams.category
     },
     isUndefined //loc underfined
   )
-  const { data } = useQuery({
+  const { data: productsResponse } = useQuery({
     queryKey: ['products', queryParams],
     queryFn: () => productApi.getProducts(queryConfig as ProductListConfig),
     placeholderData: keepPreviousData //giúp web ko bi giật, web giật vì khi chuyển trang component bị re-render, data bị underfined đến khi query gọi xong.
     //nếu them thuộc tính này thì sẽ giữ data cũ đến khi gọi xong query
+    //tuy nhiên là data vãn sẽ bị underfinded lần đầu tiên tải trang hoặc user f5 nên vẫn phải handle
   })
-  // console.log(queryParams)
-  // console.log(data)
+  const { data: categoriesResponse } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => categoryApi.getCategories()
+  })
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
         <div className='grid grid-cols-12 gap-6'>
           <div className='col-span-3'>
-            <AsideFilter />
+            <AsideFilter queryConfig={queryConfig} categories={categoriesResponse?.data.data || []} />
           </div>
           <div className='col-span-9'>
-            <SortProductList queryConfig={queryConfig} pageSize={data?.data.data?.pagination.page_size} />
-            <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2'>
-              {data &&
-                data.data.data?.products.map((product) => (
+            <SortProductList
+              queryConfig={queryConfig}
+              pageSize={productsResponse?.data.data?.pagination.page_size || 0}
+            />
+            <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2'>
+              {productsResponse &&
+                productsResponse.data.data?.products.map((product) => (
                   <div className='col-span-1' key={product._id}>
                     <Product product={product} />
                   </div>
                 ))}
             </div>
-            {data && <Pagination queryConfig={queryConfig} pageSize={data.data.data?.pagination.page_size} />}
+            {productsResponse && (
+              <Pagination queryConfig={queryConfig} pageSize={productsResponse.data.data?.pagination.page_size || 0} />
+            )}
           </div>
         </div>
       </div>

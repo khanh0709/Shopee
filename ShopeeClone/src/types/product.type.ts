@@ -34,6 +34,7 @@ export interface ProductListConfig {
   price_min?: number
   price_max?: number
   name?: string
+  category?: string
 }
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string

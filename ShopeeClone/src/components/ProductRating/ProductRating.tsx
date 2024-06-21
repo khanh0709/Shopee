@@ -1,6 +1,15 @@
-export default function ProductRating({ rating }: { rating: number }) {
+interface Props {
+  rating: number
+  activeClassName?: string
+  noneActiveClassName?: string
+}
+export default function ProductRating({
+  rating,
+  activeClassName = 'w-2 h-2 text-yellow-500 fill-yellow-500',
+  noneActiveClassName = 'w-2 h-2 text-gray-500 fill-gray-500'
+}: Props) {
+  console.log(rating)
   const handleWidth = (order: number) => {
-    // console.log(order, rating)
     if (order <= rating) {
       return '100%'
     }
@@ -19,7 +28,7 @@ export default function ProductRating({ rating }: { rating: number }) {
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
               fill='currentColor'
-              className='w-2 h-2  fill-gray-500'
+              className={noneActiveClassName}
             >
               <path
                 fillRule='evenodd'
@@ -27,12 +36,12 @@ export default function ProductRating({ rating }: { rating: number }) {
                 clipRule='evenodd'
               />
             </svg>
-            <div className={`absolute top-0 left-0 w-[${handleWidth(index + 1)}] h-full overflow-hidden`}>
+            <div className={`absolute top-0 left-0 h-full overflow-hidden`} style={{ width: handleWidth(index + 1) }}>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 24 24'
                 fill='currentColor'
-                className='w-2 h-2 fill-yellow-500'
+                className={activeClassName}
               >
                 <path
                   fillRule='evenodd'

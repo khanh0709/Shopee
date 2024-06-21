@@ -3,11 +3,11 @@ import { QueryConfig } from '../../types/product.type'
 import path from '../../constants/path'
 /*Pagination nên để là Link chứ không phải button để có behavior khi hover(hiện link) và có thể open new tab */
 interface Props {
-  pageSize?: number
+  pageSize: number
   range?: number
   queryConfig: QueryConfig
 }
-export default function Pagination({ pageSize = 20, range = 2, queryConfig }: Props) {
+export default function Pagination({ pageSize, range = 2, queryConfig }: Props) {
   const page = Number.parseInt(queryConfig.page || '1')
   const renderPagination = () => {
     return Array(pageSize)
