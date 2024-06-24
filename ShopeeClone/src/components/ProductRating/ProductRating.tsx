@@ -8,7 +8,7 @@ export default function ProductRating({
   activeClassName = 'w-2 h-2 text-yellow-500 fill-yellow-500',
   noneActiveClassName = 'w-2 h-2 text-gray-500 fill-gray-500'
 }: Props) {
-  console.log(rating)
+  // console.log(rating)
   const handleWidth = (order: number) => {
     if (order <= rating) {
       return '100%'

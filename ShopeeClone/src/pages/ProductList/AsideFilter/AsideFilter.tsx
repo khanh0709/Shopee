@@ -1,17 +1,49 @@
-import { Link, createSearchParams } from 'react-router-dom'
+import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import path from '../../../constants/path'
-import Input from '../../../components/Input'
 import Button from '../../../components/Button/Button'
 import StartLine from '../../../components/StarLine'
 import { QueryConfig } from '../../../types/product.type'
 import { Category } from '../../../types/category.type'
 import { omit } from 'lodash'
+import InputNumber from '../../../components/InputNumber'
+import { useForm, Controller } from 'react-hook-form'
+import { PriceSchema, priceSchema } from '../../../utils/rule'
+import { yupResolver } from '@hookform/resolvers/yup'
 interface Props {
   queryConfig: QueryConfig
   categories: Category[]
 }
+/*
+
+*/
 export default function AsideFilter({ queryConfig, categories }: Props) {
   const { category } = queryConfig
+  const {
+    control,
+    handleSubmit,
+    trigger,
+    formState: { errors }
+  } = useForm<PriceSchema>({
+    defaultValues: {
+      price_min: '',
+      price_max: ''
+    },
+    resolver: yupResolver(priceSchema)
+  })
+  const navigate = useNavigate()
+  const onSubmit = handleSubmit(
+    (data) => {
+      navigate({
+        pathname: path.home,
+        search: createSearchParams({
+          ...queryConfig,
+          price_max: data.price_max ?? '',
+          price_min: data.price_min ?? ''
+        }).toString()
+      })
+    },
+    (err) => {}
+  )
   return (
     <div className='py-4'>
       <Link
@@ -90,24 +122,62 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
       <div className='bg-gray-300 h-[1px] my-4'></div>
       <div className='my-5'>
         <div className='text-left'>Khoảng giá</div>
-        <form action='' className='mt-2'>
+        <form action='' className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start justify-between'>
-            <Input
-              placeholder='đ TỪ'
-              type='text'
-              className='grow'
-              name='from'
-              classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+            <Controller
+              control={control}
+              name='price_min'
+              render={({ field }) => {
+                //field include onChange, onBlur, value, name, ref
+                return (
+                  <InputNumber
+                    placeholder='đ TỪ'
+                    type='text'
+                    className='grow'
+                    name='from'
+                    classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+                    classNameError='hidden'
+                    onChange={(event) => {
+                      field.onChange(event)
+                      trigger('price_max')
+                    }}
+                    //trong truong hop muon truyen cai khac thi
+                    // onChange={(event, abc) => {
+                    //   field.onChange(event)
+                    // }}
+                    //làm thế này thì sau khi submit bị err, nếu max onChange cho hết lỗi thì min vẫn còn lỗi do ta ko onchange min nên nó ko validate lại min -> khi onchange 1 thằng phải trigger validate thằng còn lại
+                    value={field.value}
+                    ref={field.ref} //để errors.price_min có 1 số method khác
+                    //nếu sử dụng register thì đã có ref rồi
+                  />
+                )
+              }}
             />
             <div className='mx-2 mt-1 shrink-0'>-</div>
-            <Input
-              placeholder='đ ĐẾN'
-              type='text'
-              className='grow'
-              name='to'
-              classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+            <Controller
+              control={control}
+              name='price_max'
+              render={({ field }) => {
+                return (
+                  <InputNumber
+                    placeholder='đ ĐẾN'
+                    type='text'
+                    className='grow'
+                    name='to'
+                    classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+                    classNameError='hidden'
+                    onChange={(event) => {
+                      field.onChange(event)
+                      trigger('price_min')
+                    }}
+                    value={field.value}
+                    ref={field.ref}
+                  />
+                )
+              }}
             />
           </div>
+          <div className='mt-1 text-sm text-red-600 min-h-[1.25rem]'>{errors.price_min?.message}</div>
           <Button className='w-full p-2 uppercase bg-orange text-white text-sm hover:bg-orange/80 flex items-center justify-center'>
             Áp Dụng
           </Button>

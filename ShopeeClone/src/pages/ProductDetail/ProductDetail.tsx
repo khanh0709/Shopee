@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom'
 import productApi from '../../apis/product.apis'
 import { divide } from 'lodash'
 import ProductRating from '../../components/ProductRating'
+import { formatCurrency, forrmatNumberToSocialStyle, rateSale } from '../../utils/utils'
+import Input from '../../components/Input'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -75,6 +77,53 @@ export default function ProductDetail() {
                     activeClassName='w-4 h-4 fill-orange'
                     noneActiveClassName='w-4 h-4 fill-gray-500'
                   />
+                </div>
+                <div className='mx-4 h-4 bg-gray-300 w-[1px]'></div>
+                <div className='flex  items-center'>
+                  <span>{forrmatNumberToSocialStyle(product.sold)}</span>
+                  <div className='ml-1 text-gray-500'>Đã bán</div>
+                </div>
+                <div className='mx-4 h-4 bg-gray-300 w-[1px]'></div>
+                <div className='flex  items-center'>
+                  <span>{forrmatNumberToSocialStyle(product.sold)}</span>
+                  <div className='ml-1 text-gray-500'>Đã bán</div>
+                </div>
+              </div>
+              <div className='mt-8 flex items-center bg-gray-100 px-5 py-4'>
+                <div className='text-gray-500 line-through'>đ{formatCurrency(product.price_before_discount)}</div>
+                <div className='ml-3 text-3xl font-medium text-orange'>đ{formatCurrency(product.price)}</div>
+                <div className='ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white'>
+                  {rateSale(product.price_before_discount, product.price)}
+                </div>
+                <div className='mt-8 flex items-center'>
+                  <div className='capitalize text-gray-500'>số lượng</div>
+                  <div className='ml-10 flex items-center'>
+                    <button className='flex h-8 w-8 items-center justify-center rounded-l-sm border border-gray-300 text-gray-600'>
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        strokeWidth={1.5}
+                        stroke='currentColor'
+                        className='size-4'
+                      >
+                        <path strokeLinecap='round' strokeLinejoin='round' d='M5 12h14' />
+                      </svg>
+                    </button>
+                    {/* <Input /> continue */}
+                    <button className='flex h-8 w-8 items-center justify-center rounded-l-sm border border-gray-300 text-gray-600'>
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        strokeWidth={1.5}
+                        stroke='currentColor'
+                        className='size-4'
+                      >
+                        <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
