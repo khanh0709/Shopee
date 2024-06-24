@@ -1,11 +1,31 @@
+import { createSearchParams, useNavigate } from 'react-router-dom'
+import { QueryConfig } from '../../types/product.type'
+import path from '../../constants/path'
+
 interface Props {
-  star?: Number
-  emptyStar?: Number
+  star?: number
+  starLength?: number
   children?: React.ReactNode
+  queryConfig: QueryConfig
 }
-export default function StartLine({ star = 0, emptyStar = 0, children }: Props) {
+export default function StartLine({ star = 0, starLength = 5, children, queryConfig }: Props) {
+  const navigate = useNavigate()
+  const handleFilterStar = (star: number) => {
+    navigate({
+      pathname: path.home,
+      search: createSearchParams({
+        ...queryConfig,
+        rating_filter: star.toString()
+      }).toString()
+    })
+  }
   return (
-    <>
+    <div
+      className='flex items-center text-sm hover:bg-gray-100 hover:cursor-pointer'
+      onClick={() => {
+        handleFilterStar(star)
+      }}
+    >
       {Array(star)
         .fill(0)
         .map((_, index) => (
@@ -23,7 +43,7 @@ export default function StartLine({ star = 0, emptyStar = 0, children }: Props) 
             />
           </svg>
         ))}
-      {Array(emptyStar)
+      {Array(starLength - star)
         .fill(0)
         .map((_, index) => (
           <svg
@@ -43,6 +63,6 @@ export default function StartLine({ star = 0, emptyStar = 0, children }: Props) 
           </svg>
         ))}
       {children}
-    </>
+    </div>
   )
 }

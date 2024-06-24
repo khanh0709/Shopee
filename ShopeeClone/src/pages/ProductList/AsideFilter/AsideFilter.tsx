@@ -22,6 +22,8 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     control,
     handleSubmit,
     trigger,
+    watch,
+    reset,
     formState: { errors }
   } = useForm<PriceSchema>({
     defaultValues: {
@@ -44,6 +46,15 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     },
     (err) => {}
   )
+  const handleRemoveAll = () => {
+    reset()
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(
+        omit(queryConfig, ['price_max', 'price_min', 'category', 'rating_filter', 'page'])
+      ).toString()
+    })
+  }
   return (
     <div className='py-4'>
       <Link
@@ -187,33 +198,49 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
       <div className='text-sm'>Đánh giá</div>
       <ul className='my-3'>
         <li className='py-1 pl-2'>
-          <Link to={path.home} className='flex items-center text-sm'>
-            <StartLine star={5} />
+          {/* <Link to={path.home} className='flex items-center text-sm'>
+            <StartLine star={5} queryConfig={queryConfig} />
           </Link>
           <Link to={path.home} className='flex items-center text-sm'>
-            <StartLine star={4} emptyStar={1}>
+            <StartLine star={4} queryConfig={queryConfig} >
               <span>Trở lên</span>
             </StartLine>
           </Link>
           <Link to={path.home} className='flex items-center text-sm'>
-            <StartLine star={3} emptyStar={2}>
+            <StartLine star={3} queryConfig={queryConfig} >
               <span>Trở lên</span>
             </StartLine>
           </Link>
           <Link to={path.home} className='flex items-center text-sm'>
-            <StartLine star={2} emptyStar={3}>
+            <StartLine star={2} queryConfig={queryConfig} >
               <span>Trở lên</span>
             </StartLine>
           </Link>
           <Link to={path.home} className='flex items-center text-sm'>
-            <StartLine star={1} emptyStar={4}>
+            <StartLine star={1} queryConfig={queryConfig} >
               <span>Trở lên</span>
             </StartLine>
-          </Link>
+          </Link> */}
+          <StartLine star={5} queryConfig={queryConfig} />
+          <StartLine star={4} queryConfig={queryConfig}>
+            <span>Trở lên</span>
+          </StartLine>
+          <StartLine star={3} queryConfig={queryConfig}>
+            <span>Trở lên</span>
+          </StartLine>
+          <StartLine star={2} queryConfig={queryConfig}>
+            <span>Trở lên</span>
+          </StartLine>
+          <StartLine star={1} queryConfig={queryConfig}>
+            <span>Trở lên</span>
+          </StartLine>
         </li>
       </ul>
       <div className='bg-gray-300 h-[1px] my-4'>
-        <Button className='w-full p-2 uppercase bg-orange text-white text-sm hover:bg-orange/80 flex items-center justify-center uppercase'>
+        <Button
+          onClick={handleRemoveAll}
+          className='w-full p-2 uppercase bg-orange text-white text-sm hover:bg-orange/80 flex items-center justify-center uppercase'
+        >
           Xóa Tất Cả
         </Button>
       </div>
